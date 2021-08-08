@@ -21,14 +21,12 @@ def kernel_regression(K_trtr, K_tetr, y_tr, y_te):
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--first', type=int, required=True)
-parser.add_argument('--second', type=int, required=True)
 parser.add_argument('--filtersize', type=int, required=True)
 parser.add_argument('--stride', type=int, required=True)
 
 args = parser.parse_args()
 
-filename = 'gramMNIST_' + str(args.first) + '-' +str(args.second)
+filename = 'gramMNIST'
 filename += '_s' + str(args.filtersize)
 filename += '_str' + str(args.stride)
 gram = torch.load('/home/cagnetta/krr_mnist_gram/' + filename + '.pt', map_location=device)
@@ -38,7 +36,7 @@ gram_tetr = gram['gram_tetr']
 y_train = gram['y_train']
 y_test = gram['y_test']
 
-shuffled = torch.randperm(8192)
+shuffled = torch.randperm(16384)
 plist = [128, 256, 512, 1024, 2048, 4096, 8192]
 
 error = []
@@ -46,7 +44,7 @@ std = []
 
 for p in plist:
 
-    nexp = 8192 // p
+    nexp = 16384 // p
     print(p, nexp, flush=True)
 
     mse = []
@@ -69,4 +67,4 @@ torch.save({
         'plist': plist,
         'mse': error,
         'std': std
-        }, f'mnist_mse_llap_{args.first}-{args.second}_s{args.filtersize}_str{args.stride}.pt')
+        }, f'mnist_mse_llap_s{args.filtersize}_str{args.stride}.pt')
